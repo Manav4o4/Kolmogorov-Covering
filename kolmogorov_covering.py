@@ -4,9 +4,15 @@ from itertools import combinations
 import networkx as nx
 import matplotlib.pyplot as plt
 from Generate_data_set.generate_erdos_renyi_graph import generate_erdos_renyi_graph
-from RNN import model
+from Generate_data_set.generate_random_graphs import generate_valid_graph
+from scripts.RNN import model
+from Generate_data_set.adjacency_matrix_encoding import adjacency_matrix_to_string
+import os
+import copy
 
-def kolmogorov_covering(graph, model):
+def kolmogorov_covering(graph, model, flag):
+
+    count = 0
 
     vertices = len(graph)
 
@@ -16,7 +22,9 @@ def kolmogorov_covering(graph, model):
 
     graph_dict = matrix_to_dict(graph)
 
-    # display_graph(graph_dict, vertices)
+    if (flag == True):
+
+        display_graph(graph_dict, count)
 
     for i in range(vertices, math.ceil(2*math.log(vertices, 2) + 5), -1):
 
@@ -34,12 +42,14 @@ def kolmogorov_covering(graph, model):
 
         for subgraph in subsets:
 
-            subgraph_bitstring = create_bitstring(subgraph, graph_dict) # Creates the bitstring for the current subgraph
+            subgraph_matrix = copy.deepcopy(graph) # Create a copy of the graph which will be modified for the subgraph
+
+            subgraph_matrix = create_subgraph_matrix(graph, subgraph, subgraph_matrix) # Create the maxtrix of the subgraph after deleting vertices that are not in the subset
+
+            subgraph_bitstring = adjacency_matrix_to_string(subgraph_matrix) # Creates the bitstring for the current subgraph with n choose 2 bits
 
             with torch.no_grad():
                 output = model(string_to_tensor(subgraph_bitstring))
-
-            # print(output.item(), i)
 
             if output.item() > 0.5: # If the graph is basic, then update the complexity, graph_dict
 
@@ -47,15 +57,19 @@ def kolmogorov_covering(graph, model):
 
                     numpy_graph = np.array(graph)
 
-                    graph = delete_vertex(numpy_graph, subgraph[vertex-1]).tolist()
+                    graph = delete_vertex(numpy_graph, subgraph[vertex-1]).tolist() # -1 for the indices
 
                 graph_dict = matrix_to_dict(graph)
 
                 complexity -= math.comb(len(subgraph), 2)
 
-                # display_graph(graph_dict, vertices)
+                if (flag == True):
 
-                if len(graph) < math.ceil(2*math.log(vertices, 2) + 5): # If |graph| < |subgraph|, then break
+                    count += 1
+
+                    display_graph(graph_dict, count)
+
+                if len(graph) < math.ceil(2*math.log(vertices, 2) + 5): # If |graph| < |size of required subgraph|, then break
 
                     break
 
@@ -83,17 +97,7 @@ def delete_vertex(graph, vertex):
     graph = np.delete(graph, vertex, axis=1)  # Delete the column
     return graph
 
-def create_bitstring(subgraph, graph_dict):
-
-    subgraph_bitstring = ''
-
-    for vertex in subgraph:
-
-        subgraph_bitstring = subgraph_bitstring + graph_dict[vertex][vertex:] # Builds the substring of the current subgraph
-
-    return subgraph_bitstring
-
-def display_graph(matrix_dict, vertices):
+def display_graph(matrix_dict, count):
 
     matrix_copy_as_list = [list(map(int, row)) for row in matrix_dict.values()]
 
@@ -106,6 +110,24 @@ def display_graph(matrix_dict, vertices):
 
     print(G)
 
+    filename = f"{count}th graph on 30 vertices.png"
+
+    save_path = os.path.join('Graph_outputs', filename)
+
     nx.draw(G, pos, labels=labels, with_labels=True, node_color="lightblue", font_weight="bold")
+    plt.savefig(save_path)
+    plt.grid(True)
     plt.show()
-                
+    plt.clf()
+
+def create_subgraph_matrix(graph, subgraph, subgraph_matrix):
+
+    for vertex in range(len(graph), 0, -1):
+                    
+        if vertex not in subgraph:
+
+            numpy_graph = np.array(subgraph_matrix)
+
+            subgraph_matrix = delete_vertex(numpy_graph, vertex-1).tolist() # -1 for the indices
+
+    return subgraph_matrix

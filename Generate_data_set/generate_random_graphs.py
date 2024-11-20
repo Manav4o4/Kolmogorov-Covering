@@ -1,6 +1,6 @@
 import networkx as nx
 import numpy as np
-from adjacency_matrix_encoding import adjacency_matrix_to_string
+from Generate_data_set.adjacency_matrix_encoding import adjacency_matrix_to_string
 
 def is_excluded_graph(G):
     """
@@ -56,4 +56,4 @@ def generate_valid_graph(vertices, edge_prob):
         if not is_excluded_graph(G):  # Check if it's a valid graph
             matrix = nx.to_numpy_array(G, dtype=int)
             bitstring = adjacency_matrix_to_string(matrix)
-            return bitstring
+            return bitstring, matrix
