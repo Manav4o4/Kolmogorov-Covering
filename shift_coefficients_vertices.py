@@ -1,4 +1,3 @@
-from shift_coefficients_edge_sets import factors
 import networkx as nx
 import matplotlib.pyplot as plt
 import numpy as np
@@ -15,20 +14,7 @@ def vertex_shift_coefficients(matrix): # Matrix is labeled
 
         matrix_dict_copy = {k: list(v) for k, v in matrix_dict.items()}
 
-        '''
-
-        # Uncomment this to visualize the graph with every iteration
-
-        matrix_copy_as_list = list(matrix_dict_copy.values())
-
-        G = nx.from_numpy_array(np.array(matrix_copy_as_list))
-
-        labels = {i: f"{i+1}" for i in range(vertices)}  # Using v1, v2, ... as labels
-        pos = nx.spring_layout(G)  # Position the nodes with a layout for better visualization
-        nx.draw(G, pos, labels=labels, with_labels=True, node_color="lightblue", font_weight="bold")
-        plt.show()
-
-        '''
+        display_graph(matrix_dict_copy, vertices)
 
         for i in range(1, vertices + 1):
             
@@ -70,6 +56,26 @@ def shift_list(lst, shift):
 
     # Perform the shift
     return lst[-shift:] + lst[:-shift]
+
+def display_graph(matrix_dict, vertices):
+
+    matrix_copy_as_list = list(matrix_dict.values())
+
+    G = nx.from_numpy_array(np.array(matrix_copy_as_list))
+
+    labels = {i: f"{i+1}" for i in range(vertices)}  # Using v1, v2, ... as labels
+    pos = nx.spring_layout(G)  # Position the nodes with a layout for better visualization
+    nx.draw(G, pos, labels=labels, with_labels=True, node_color="lightblue", font_weight="bold")
+    plt.show()
+
+def factors(n):
+    result = []
+    for i in range(1, int(n**0.5) + 1):
+        if n % i == 0:
+            result.append(i)
+            if i != n // i:  # Avoid adding the square root twice for perfect squares
+                result.append(n // i)
+    return sorted(result)
 
 
 matrix = [  # Vertex labels (header row)

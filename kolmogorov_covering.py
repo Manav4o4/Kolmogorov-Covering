@@ -1,6 +1,10 @@
 import math, torch
 import numpy as np
 from itertools import combinations
+import networkx as nx
+import matplotlib.pyplot as plt
+from Generate_data_set.generate_erdos_renyi_graph import generate_erdos_renyi_graph
+from RNN import model
 
 def kolmogorov_covering(graph, model):
 
@@ -9,6 +13,10 @@ def kolmogorov_covering(graph, model):
     complexity = math.comb(vertices, 2)
 
     subgraphs_iterated_over = 0
+
+    graph_dict = matrix_to_dict(graph)
+
+    # display_graph(graph_dict, vertices)
 
     for i in range(vertices, math.ceil(2*math.log(vertices, 2) + 5), -1):
 
@@ -44,6 +52,8 @@ def kolmogorov_covering(graph, model):
                 graph_dict = matrix_to_dict(graph)
 
                 complexity -= math.comb(len(subgraph), 2)
+
+                # display_graph(graph_dict, vertices)
 
                 if len(graph) < math.ceil(2*math.log(vertices, 2) + 5): # If |graph| < |subgraph|, then break
 
@@ -82,7 +92,20 @@ def create_bitstring(subgraph, graph_dict):
         subgraph_bitstring = subgraph_bitstring + graph_dict[vertex][vertex:] # Builds the substring of the current subgraph
 
     return subgraph_bitstring
-            
 
+def display_graph(matrix_dict, vertices):
 
-    
+    matrix_copy_as_list = [list(map(int, row)) for row in matrix_dict.values()]
+
+    print(matrix_dict)
+
+    G = nx.from_numpy_array(np.array(matrix_copy_as_list))
+
+    labels = {i: f"{i+1}" for i in range(len(matrix_copy_as_list))}  # Using v1, v2, ... as labels
+    pos = nx.spring_layout(G)  # Position the nodes with a layout for better visualization
+
+    print(G)
+
+    nx.draw(G, pos, labels=labels, with_labels=True, node_color="lightblue", font_weight="bold")
+    plt.show()
+                

@@ -1,5 +1,5 @@
 from kolmogorov_covering import kolmogorov_covering
-from Generate_data_set.generate_random_graphs import generate_erdos_renyi_graph
+from Generate_data_set.generate_erdos_renyi_graph import generate_erdos_renyi_graph
 import math
 import matplotlib.pyplot as plt
 from RNN import model
@@ -7,9 +7,9 @@ import os
 
 model.eval()
 
-def k_covering_fifty():
+def k_covering():
 
-    vertices = 30
+    vertices = 15
     k_complexity_list = []
     prob_list = []
     iteration_list = []
@@ -51,7 +51,7 @@ def k_covering_fifty():
     plt.ylabel('Values')
     plt.title('K-Complexity and Starting Complexity vs Probability')
     plt.legend()
-    save_path = os.path.join('Outputs', "k_complexity_vs_probability_30.png")
+    save_path = os.path.join('Outputs', "k_complexity_vs_probability_15.png")
     plt.savefig(save_path)
     plt.grid(True)
     plt.show()
@@ -63,9 +63,9 @@ def k_covering_fifty():
     plt.ylabel('Number of Iterations')
     plt.title('Number of Iterations vs Probability')
     plt.legend()
-    save_path = os.path.join('Outputs', "iteratations_vs_probability_30.png")
+    save_path = os.path.join('Outputs', "iteratations_vs_probability_15.png")
     plt.savefig(save_path)
     plt.grid(True)
     plt.show()
 
-k_covering_fifty()
+k_covering()
