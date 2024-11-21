@@ -9,7 +9,7 @@ model.eval()
 
 def k_covering():
 
-    vertices = 25
+    vertices = 40
     k_complexity_list = []
     prob_list = []
     iteration_list = []
@@ -27,7 +27,7 @@ def k_covering():
 
         num_iterations = 0
 
-        for j in range(0,10,1):
+        for j in range(0,6,1):
 
             graph = generate_erdos_renyi_graph(vertices, prob)
 
@@ -51,7 +51,7 @@ def k_covering():
     plt.ylabel('Values')
     plt.title('K-Complexity and Starting Complexity vs Probability')
     plt.legend()
-    save_path = os.path.join('Iteration Count', "k_complexity_vs_probability_25.png")
+    save_path = os.path.join('Iteration Count', "k_complexity_vs_probability_40.png")
     plt.savefig(save_path)
     plt.grid(True)
     plt.show()
@@ -63,12 +63,8 @@ def k_covering():
     plt.ylabel('Number of Iterations')
     plt.title('Number of Iterations vs Probability')
     plt.legend()
-    save_path = os.path.join('Iteration Count', "iteratations_vs_probability_25.png")
+    save_path = os.path.join('Iteration Count', "iteratations_vs_probability_40.png")
     plt.savefig(save_path)
     plt.grid(True)
     plt.show()
 
-k_covering()
-
-#graph = generate_erdos_renyi_graph(30, 0.1)
-#kolmogorov_covering(graph, model, True)
