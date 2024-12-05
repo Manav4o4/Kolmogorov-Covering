@@ -9,62 +9,57 @@ model.eval()
 
 def k_covering():
 
-    vertices = 40
-    k_complexity_list = []
-    prob_list = []
-    iteration_list = []
-    original_complexity_list = []
+    vertex_list = [50]
 
-    for i in range(1, 11, 1):
+    for vertices in vertex_list:
+        k_complexity_list = []
+        prob_list = []
+        iteration_list = []
 
-        prob = i/10
+        for i in range(1, 11, 1):
 
-        prob_list.append(prob)
+            prob = i/10
 
-        original_complexity = math.comb(vertices, 2)
+            prob_list.append(prob)
 
-        k_complexity = 0
+            k_complexity = 0
 
-        num_iterations = 0
+            num_iterations = 0
 
-        for j in range(0,6,1):
+            for j in range(0,30,1):
 
-            graph = generate_erdos_renyi_graph(vertices, prob)
+                graph = generate_erdos_renyi_graph(vertices, prob)
 
-            k_complexity_temp, num_iterations_temp = kolmogorov_covering(graph, model, False)
+                k_complexity_temp, num_iterations_temp = kolmogorov_covering(graph, model, False)
 
-            k_complexity += k_complexity_temp
+                k_complexity += k_complexity_temp
 
-            num_iterations += num_iterations_temp
+                num_iterations += num_iterations_temp
 
-        k_complexity_list.append(k_complexity // 10)
+            k_complexity_list.append(k_complexity // 10)
 
-        iteration_list.append(num_iterations // 10)
+            iteration_list.append(num_iterations // 10)
 
-        original_complexity_list.append(original_complexity)
+        
+        plt.figure(figsize=(10, 8))
+        plt.plot(prob_list, k_complexity_list, label='K-Complexity', marker='o', color='blue')
+        plt.xlabel('Probability')
+        plt.ylabel('K-Complexity')
+        plt.title('K-Complexity vs Probability')
+        plt.legend()
+        filename = f"k-complexity_vs_probability {vertices} vertices.png"
+        save_path = os.path.join('K-Complexity Plots from 2log(n)+5', filename)
+        plt.savefig(save_path)
 
-    
-    plt.figure(figsize=(8, 6))
-    plt.plot(prob_list, k_complexity_list, label='K-Complexity', marker='o', color='blue')
-    plt.plot(prob_list, original_complexity_list, label='Starting Complexity', marker='p', color='red')
-    plt.xlabel('Probability')
-    plt.ylabel('Values')
-    plt.title('K-Complexity and Starting Complexity vs Probability')
-    plt.legend()
-    save_path = os.path.join('Iteration Count', "k_complexity_vs_probability_40.png")
-    plt.savefig(save_path)
-    plt.grid(True)
-    plt.show()
+        # New figure for iterations
+        plt.figure(figsize=(10, 8))
+        plt.plot(prob_list, iteration_list, label='Number of Iterations', marker='x', color='orange')
+        plt.xlabel('Probability')
+        plt.ylabel('Number of Iterations')
+        plt.title('Number of Iterations vs Probability')
+        plt.legend()
+        filename = f"iteratations_vs_probability {vertices} vertices.png"
+        save_path = os.path.join('K-Complexity Plots from 2log(n)+5', filename)
+        plt.savefig(save_path)
 
-    # New figure for iterations
-    plt.figure(figsize=(8, 6))
-    plt.plot(prob_list, iteration_list, label='Number of Iterations', marker='x', color='orange')
-    plt.xlabel('Probability')
-    plt.ylabel('Number of Iterations')
-    plt.title('Number of Iterations vs Probability')
-    plt.legend()
-    save_path = os.path.join('Iteration Count', "iteratations_vs_probability_40.png")
-    plt.savefig(save_path)
-    plt.grid(True)
-    plt.show()
-
+k_covering()

@@ -108,7 +108,7 @@ with torch.no_grad():
     for sequences, labels in test_dataloader:
         sequences = sequences.unsqueeze(-1)
         outputs = model(sequences)
-        predictions = (outputs > 0.5).float()
+        predictions = (outputs > 0.9).float()
         correct += (predictions == labels).sum().item()
         total += labels.size(0)
 
