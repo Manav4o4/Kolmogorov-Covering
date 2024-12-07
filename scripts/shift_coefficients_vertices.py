@@ -1,8 +1,4 @@
-import networkx as nx
-import matplotlib.pyplot as plt
-import numpy as np
-
-def vertex_shift_coefficients(matrix): # Matrix is labeled
+def vertex_shift_coefficients(matrix):
 
     matrix_dict = matrix_to_dict(matrix)
 
@@ -13,8 +9,6 @@ def vertex_shift_coefficients(matrix): # Matrix is labeled
     for current_factor in factor_list:
 
         matrix_dict_copy = {k: list(v) for k, v in matrix_dict.items()}
-
-        display_graph(matrix_dict_copy, vertices)
 
         for i in range(1, vertices + 1):
             
@@ -57,16 +51,6 @@ def shift_list(lst, shift):
     # Perform the shift
     return lst[-shift:] + lst[:-shift]
 
-def display_graph(matrix_dict, vertices):
-
-    matrix_copy_as_list = list(matrix_dict.values())
-
-    G = nx.from_numpy_array(np.array(matrix_copy_as_list))
-
-    labels = {i: f"{i+1}" for i in range(vertices)}  # Using v1, v2, ... as labels
-    pos = nx.spring_layout(G)  # Position the nodes with a layout for better visualization
-    nx.draw(G, pos, labels=labels, with_labels=True, node_color="lightblue", font_weight="bold")
-    plt.show()
 
 def factors(n):
     result = []

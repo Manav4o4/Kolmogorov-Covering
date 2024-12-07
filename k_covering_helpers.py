@@ -70,15 +70,25 @@ def delete_subgraph(subgraph, graph, vertices):
         
     return graph, vertices
 
-def vis_dict_update(subgraph, vertex_list, graph_dict):
+def vis_dict_update(subgraph, vertex_dict, graph_dict):
 
-    print(vertex_list)
+    temp_dict = {}
 
-    for vertex in subgraph:
+    for key in vertex_dict.keys():
 
-        vertex_list.remove(vertex)
+        if key not in subgraph:
 
-    print(vertex_list)
+            temp_dict[key] = vertex_dict[key]
+
+    vertex_dict = temp_dict
+
+    sorted_items = sorted(vertex_dict.items())  # Sort the items by keys
+
+    vertex_dict = {new_key: value for new_key, (_, value) in enumerate(sorted_items, start=1)}  # Renumber keys
+
+    print(vertex_dict)
+
+    vertex_list = list(vertex_dict.values())
 
     if len(vertex_list) == 1:
 
@@ -94,4 +104,4 @@ def vis_dict_update(subgraph, vertex_list, graph_dict):
 
             temp_dict[vertex_list[i]] = graph_dict[dict_keys[i]]
 
-    return vertex_list, temp_dict
+    return vertex_dict, temp_dict

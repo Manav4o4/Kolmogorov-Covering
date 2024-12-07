@@ -1,6 +1,5 @@
-from kolmogorov_covering import kolmogorov_covering
+from kolmogorov_covering_up import kolmogorov_covering
 from Generate_data_set.generate_erdos_renyi_graph import generate_erdos_renyi_graph
-import math
 import matplotlib.pyplot as plt
 from scripts.RNN import model
 import os
@@ -9,12 +8,37 @@ model.eval()
 
 def k_covering():
 
-    vertex_list = [50]
+    vertex_list = [15, 20, 30, 40, 50, 60]
 
     for vertices in vertex_list:
+
+        k_complexity = 0
+
+        num_iterations = 0
+
         k_complexity_list = []
+        
         prob_list = []
+
         iteration_list = []
+
+        prob = 0.05
+
+        prob_list.append(prob)
+
+        for j in range(0,30,1):
+
+            graph = generate_erdos_renyi_graph(vertices, prob)
+
+            k_complexity_temp, num_iterations_temp = kolmogorov_covering(graph, model, False)
+
+            k_complexity += k_complexity_temp
+
+            num_iterations += num_iterations_temp
+
+        k_complexity_list.append(k_complexity // 30)
+
+        iteration_list.append(num_iterations // 30)
 
         for i in range(1, 11, 1):
 
@@ -36,9 +60,9 @@ def k_covering():
 
                 num_iterations += num_iterations_temp
 
-            k_complexity_list.append(k_complexity // 10)
+            k_complexity_list.append(k_complexity // 30)
 
-            iteration_list.append(num_iterations // 10)
+            iteration_list.append(num_iterations // 30)
 
         
         plt.figure(figsize=(10, 8))
