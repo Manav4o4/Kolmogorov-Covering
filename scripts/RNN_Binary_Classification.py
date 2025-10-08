@@ -1,5 +1,4 @@
 import numpy as np
-import matplotlib.pyplot as plt
 import pandas as pd
 import torch
 from torch.utils.data import DataLoader, Dataset
@@ -7,7 +6,7 @@ from sklearn.model_selection import train_test_split
 
 data = np.load('data.npy', allow_pickle=True)
 
-df = pd.DataFrame(data, columns=['Edge Code', 'Label'])
+df = pd.DataFrame(data, columns=['Edge Code', 'Type', 'Label'])
 
 X = df['Edge Code']
 y = df['Label']
@@ -56,7 +55,7 @@ class RNNClassifier(nn.Module):
 
     def forward(self, x):
         # Initialize hidden and cell states with zeros
-        h0 = torch.zeros(1, x.size(0), self.hidden_size).to(x.device)  # Adjust for `num_layers`
+        h0 = torch.zeros(1, x.size(0), self.hidden_size).to(x.device)  # Adjust for num_layers
         c0 = torch.zeros(1, x.size(0), self.hidden_size).to(x.device)
 
         # Forward propagate LSTM
@@ -71,9 +70,9 @@ class RNNClassifier(nn.Module):
     
 # Hyperparameters
 input_size = 1       # Each bit (0 or 1) is treated as one feature
-hidden_size = 64    # Number of units in LSTM hidden layer
+hidden_size = 128    # Number of units in LSTM hidden layer
 output_size = 1      # Output for binary classification (0 or 1)
-num_epochs = 100
+num_epochs = 200
 learning_rate = 0.001
 
 # Initialize model, criterion, and optimizer
@@ -108,7 +107,7 @@ with torch.no_grad():
     for sequences, labels in test_dataloader:
         sequences = sequences.unsqueeze(-1)
         outputs = model(sequences)
-        predictions = (outputs > 0.9).float()
+        predictions = (outputs > 0.95).float()
         correct += (predictions == labels).sum().item()
         total += labels.size(0)
 

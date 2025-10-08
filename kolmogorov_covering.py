@@ -1,11 +1,12 @@
 import math, torch
 from itertools import combinations
-from scripts.RNN import model
+from Generate_data_set.generate_erdos_renyi_graph import generate_erdos_renyi_graph
+from scripts.RNN_Binary_Classification import model
 from Generate_data_set.adjacency_matrix_encoding import adjacency_matrix_to_string
 import copy
-from k_covering_helpers import matrix_to_dict, string_to_tensor, display_graph, create_subgraph_matrix, delete_subgraph, vis_dict_update
+from k_covering_helpers import matrix_to_dict, string_to_tensor, display_graph, create_subgraph_matrix, delete_subgraph, vis_dict_update, display_subgraph
 
-def kolmogorov_covering_down(graph, model, flag):
+def kolmogorov_covering(graph, model, flag, buffer):
 
     '''
         The dictionary/hash map are for visualizing the graph, I do not consider related opertaions in the asymptotic analysis.
@@ -29,13 +30,17 @@ def kolmogorov_covering_down(graph, model, flag):
 
         display_graph(graph_dict, count, vertices)
 
-    lower_bound = math.ceil(2*math.log(vertices, 2)) + 5
+    lower_bound = math.ceil(2*math.log(vertices, 2)) + 5 + buffer
 
     upper_bound = vertices_dynamic
 
-    while upper_bound >= lower_bound:  
+    print(lower_bound)
 
-        print(upper_bound)
+    while lower_bound <= upper_bound:
+
+        if vertices_dynamic <= 0:
+
+            break
 
         if len(graph) < math.ceil(2*math.log(vertices_dynamic, 2)) + 5: # If |graph| < |subgraph|, then break
 
@@ -43,7 +48,7 @@ def kolmogorov_covering_down(graph, model, flag):
 
         graph_dict = matrix_to_dict(graph)
 
-        subsets = iter(combinations([j for j in range(1, vertices_dynamic + 1)], upper_bound)) # Gives us all possible subseuquences of the lebelling of size 'i'
+        subsets = iter(combinations([j for j in range(1, vertices_dynamic + 1)], lower_bound)) # Gives us all possible subseuquences of the lebelling of size 'i'
 
         subsets_iterator = iter(subsets)
 
@@ -76,6 +81,8 @@ def kolmogorov_covering_down(graph, model, flag):
 
                 if output.item() > 0.95: # If the graph is basic with probability 95%, then update the complexity, graph_dict
 
+                    display_subgraph(subgraph_matrix)
+                    
                     graph, vertices_dynamic = delete_subgraph(subgraph, graph, vertices_dynamic)  # Deletes the subgraph
 
                     graph_dict = matrix_to_dict(graph)  # Update the graph dictionary
@@ -94,12 +101,15 @@ def kolmogorov_covering_down(graph, model, flag):
 
                         break
 
-                    subsets_iterator = iter(combinations([j for j in range(1, vertices_dynamic + 1)], upper_bound))
+                    subsets_iterator = iter(combinations([j for j in range(1, vertices_dynamic + 1)], lower_bound))
 
                     lower_bound = math.ceil(2*math.log(vertices_dynamic, 2)) + 5
 
                     upper_bound = vertices_dynamic
 
-        upper_bound -= 1
+        lower_bound += 1
 
     return complexity, subgraphs_iterated_over
+
+graph = generate_erdos_renyi_graph(100, 0.3)
+compleixty, _ = kolmogorov_covering(graph, model, True, 0)

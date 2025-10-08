@@ -1,8 +1,9 @@
 import networkx as nx
-import numpy as np
-from Generate_data_set.adjacency_matrix_encoding import adjacency_matrix_to_string
+from adjacency_matrix_encoding import adjacency_matrix_to_string
+from graph_checks import is_maximal_bipartite, is_path
 
 def is_excluded_graph(G):
+
     """
     Check if a graph G matches any excluded pattern:
     - Complete graph
@@ -10,9 +11,9 @@ def is_excluded_graph(G):
     - Ladder graph
     - One-edge graph
     - Path graph
-    - Star graph
     - Maximal bipartite graph
     """
+
     n = G.number_of_nodes()
     m = G.number_of_edges()
 
@@ -33,11 +34,14 @@ def is_excluded_graph(G):
         return True
 
     # Check for path graph
-    if nx.is_connected(G) and nx.is_tree(G) and len(list(nx.degree(G))) == 2:
-        return True
 
-    # Check for star graph
-    if nx.is_tree(G) and sorted(dict(G.degree()).values())[-1] == n - 1:
+    # Check for maximal bipartite graph
+    adj_matrix = nx.adjacency_matrix(G).todense().tolist()
+    result = is_maximal_bipartite(adj_matrix)
+    if result == True:
+        return True
+    
+    if is_path(adj_matrix) == True:
         return True
 
     return False

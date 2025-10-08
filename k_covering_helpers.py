@@ -62,7 +62,7 @@ def delete_subgraph(subgraph, graph, vertices):
 
         numpy_graph = np.array(graph)
 
-        print("deleting ", subgraph[vertex], "from index", subgraph[vertex]-1)
+        # print("deleting ", subgraph[vertex], "from index", subgraph[vertex]-1)
 
         graph = delete_vertex(numpy_graph, subgraph[vertex]-1).tolist() # -1 for the indices
 
@@ -86,7 +86,7 @@ def vis_dict_update(subgraph, vertex_dict, graph_dict):
 
     vertex_dict = {new_key: value for new_key, (_, value) in enumerate(sorted_items, start=1)}  # Renumber keys
 
-    print(vertex_dict)
+    # print(vertex_dict)
 
     vertex_list = list(vertex_dict.values())
 
@@ -105,3 +105,31 @@ def vis_dict_update(subgraph, vertex_dict, graph_dict):
             temp_dict[vertex_list[i]] = graph_dict[dict_keys[i]]
 
     return vertex_dict, temp_dict
+
+def display_subgraph(subgraph):
+    """
+    Displays a subgraph using matplotlib and networkx.
+
+    Parameters:
+    subgraph (networkx.Graph or list of lists): The subgraph to display. 
+        If given as a list of lists, it is treated as an adjacency matrix.
+    """
+    if isinstance(subgraph, list):
+        G = nx.from_numpy_array(np.array(subgraph))
+    elif isinstance(subgraph, nx.Graph):
+        G = subgraph
+    else:
+        raise ValueError("Input must be a NetworkX graph or adjacency matrix.")
+
+    plt.figure(figsize=(8, 6))
+    nx.draw(
+        G, 
+        with_labels=True, 
+        node_color="skyblue", 
+        node_size=600, 
+        font_size=10, 
+        edge_color="gray"
+    )
+    plt.title("Subgraph Visualization")
+    plt.show()
+

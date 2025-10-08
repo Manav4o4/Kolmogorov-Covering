@@ -1,7 +1,7 @@
-from kolmogorov_covering_up import kolmogorov_covering
+from kolmogorov_covering import kolmogorov_covering
 from Generate_data_set.generate_erdos_renyi_graph import generate_erdos_renyi_graph
 import matplotlib.pyplot as plt
-from scripts.RNN import model
+from scripts.RNN_Graph_Classification import model
 import os
 
 model.eval()
